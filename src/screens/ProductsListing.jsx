@@ -1,12 +1,91 @@
-import React, { useState } from 'react'
-import { View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+
+import apiCaller from '../services/apiCaller'
+import { Table } from 'react-native-table-component'
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function ProductsListing() {
   const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
-    return (
-        <View>
+
+  useEffect(()=>{
+
+    const fetchData = async()=>{
+        try {
+            const products  =  await apiCaller('product/getall', 'POST')
+            setProducts(products)
+        } catch (error) {
             
-        </View>
+        }
+    }
+    fetchData();
+  }, [])
+
+  const renderHeader = () => (
+    <View style={styles.header}>
+      <Text style={styles.headerText}>ID</Text>
+      <Text style={styles.headerText}>Name</Text>
+      <Text style={styles.headerText}>MRP</Text>
+    </View>
+  );
+
+  // Render each row of the table
+  const renderRow = ({ item }) => (
+    <View style={styles.row}>
+      <Text style={styles.rowText}>{item.id}</Text>
+      <Text style={styles.rowText}>{item.name}</Text>
+      <Text style={styles.rowText}>{item.mrp}</Text>
+    </View>
+  );
+
+    return (
+        <SafeAreaView style={styles.container}>
+            
+            <Text style={styles.heading}>Products</Text>
+      {renderHeader()}
+      <FlatList
+        data={products}
+        renderItem={renderRow}
+        keyExtractor={(item) => item.id}
+      />
+        </SafeAreaView>
   )
 }
+
+
+const styles = StyleSheet.create({
+    container: { 
+        flex: 1, 
+        padding: 16, 
+        backgroundColor:'#1F1D2F'
+    },
+    header: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 10,
+      backgroundColor: '#f1f8ff',
+    },
+    headerText: {
+      flex: 1,
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
+    row: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingVertical: 10,
+      borderBottomWidth: 1,
+      borderColor: '#ddd',
+    },
+    rowText: {
+      flex: 1,
+      textAlign: 'center',
+      color:'white'
+    },
+    heading:{
+        fontSize:28,
+        fontWeight:'bold',
+        color:'white'
+    }
+})

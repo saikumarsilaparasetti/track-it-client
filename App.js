@@ -4,6 +4,7 @@ import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
 import Home from './src/screens/Home';
 import Login from './src/screens/Login';
+import ProductsListing from './src/screens/ProductsListing';
 
 
 const Stack = createNativeStackNavigator();
@@ -15,14 +16,14 @@ export default function App() {
     
       <NavigationContainer>
         <Stack.Navigator 
-        initialRouteName='Login'
+        initialRouteName='productsListing'
         screenOptions={{
           headerShown:false
         }}
         >
           <Stack.Screen name="Login" component={Login}/>
           <Stack.Screen name="home" component={Home}/>
-          
+          <Stack.Screen name="productsListing" component={ProductsListing}/>
         </Stack.Navigator>
       </NavigationContainer>
 
