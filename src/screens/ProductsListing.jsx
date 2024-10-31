@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
-import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
 
 import apiCaller from '../services/apiCaller'
 import { Table } from 'react-native-table-component'
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { TouchableOpacity } from 'react-native';
 
-export default function ProductsListing() {
+export default function ProductsListing({navigation}) {
   const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
 
@@ -16,7 +17,7 @@ export default function ProductsListing() {
             const products  =  await apiCaller('product/getall', 'POST')
             setProducts(products)
         } catch (error) {
-            
+            Alert.alert("Error in fetching data", error)
         }
     }
     fetchData();
@@ -32,11 +33,15 @@ export default function ProductsListing() {
 
   // Render each row of the table
   const renderRow = ({ item }) => (
-    <View style={styles.row}>
+    
+    <TouchableOpacity 
+        style={styles.row} 
+        onPress={()=>navigation.navigate('Product', {item})}    
+    >
       <Text style={styles.rowText}>{item.id}</Text>
       <Text style={styles.rowText}>{item.name}</Text>
       <Text style={styles.rowText}>{item.mrp}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
     return (
