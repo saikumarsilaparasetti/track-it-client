@@ -3,7 +3,7 @@ import { Text, TouchableOpacity } from 'react-native'
 import { Button, StyleSheet, TextInput, View } from 'react-native'
 
 export default function Filter({pushInput}) {
-    const [searchValue, setSearchValue] = useState()
+    const [searchValue, setSearchValue] = useState('')
     const handleSubmit = ()=>{
         pushInput(searchValue)
         console.log("Handle submit pressed!!", searchValue);

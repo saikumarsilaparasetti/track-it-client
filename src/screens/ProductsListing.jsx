@@ -1,31 +1,44 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { View, Text, FlatList, StyleSheet, Alert } from 'react-native';
+import { library } from '@fortawesome/fontawesome-svg-core'; 
 
 import apiCaller from '../services/apiCaller'
 import { Table } from 'react-native-table-component'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
 import Filter from '../components/Filter';
+import { FontAwesomeIcon } from '@fortawesome/react-native-fontawesome'
+import { faMugSaucer } from '@fortawesome/free-solid-svg-icons/faMugSaucer'
+
+import { fas } from '@fortawesome/free-solid-svg-icons'; // Import the solid icon set
+import { useFocusEffect } from '@react-navigation/native';
+// import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function ProductsListing({navigation}) {
   const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
+  library.add(fas); // Add the solid icon set to the library
 
-  useEffect(()=>{
+  useFocusEffect(
+    useCallback(()=>{
 
-    const fetchData = async()=>{
-        try {
-          const data ={}
-            const products  =  await apiCaller(`product/getall?query=${search}`, 'POST', data)
-            setProducts(products)
-        } catch (error) {
-            Alert.alert("Error in fetching data", error)
-        }
-    }
-    fetchData();
-  }, [search])
-
+      const fetchData = async()=>{
+          try {
+            const data ={}
+              const products  =  await apiCaller(`product/getall?query=${search}`, 'POST', data)
+              setProducts(products)
+          } catch (error) {
+              Alert.alert("Error in fetching data", error)
+          }
+      }
+      fetchData();
+    }, [search])  
   
+  )
+
+  const handleAddProduct = ()=>{
+    navigation.navigate('ProductForm',{})
+  }
   const searchValue = (valueSearched)=>{
     setSearch(valueSearched)
     console.log('Value searched', search);
@@ -57,7 +70,16 @@ export default function ProductsListing({navigation}) {
             <View style={styles.filterContainer}>
               <Filter pushInput={searchValue}/>
             </View>
-            <Text style={styles.heading}>Products</Text>
+
+            <View style={styles.headerContainer}>
+              <Text style={styles.heading}>Products</Text>
+              {/* <FontAwesomeIcon icon="fa-solid fa-plus" /> */}
+              
+              <TouchableOpacity style={styles.addIconContainer} onPress={handleAddProduct}>
+                <FontAwesomeIcon icon={['fas', 'plus']} color='white' /> 
+              </TouchableOpacity>
+              
+            </View>
       {renderHeader()}
       <FlatList
         data={products}
@@ -109,5 +131,14 @@ const styles = StyleSheet.create({
       borderColor:'red',
       height:80,
       borderRadius:10
+    },
+    headerContainer:{
+      flexDirection:'row',
+      justifyContent:'space-between',
+      paddingTop:10,
+      paddingBottom:10
+    },
+    addIconContainer:{
+      padding:10
     }
 })
