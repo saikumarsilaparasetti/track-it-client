@@ -1,6 +1,6 @@
 const apiCaller = async (endpoint, method='GET', data=null)=>{
     try {
-        const url=`http://192.168.107.212:8080/${endpoint}`
+        const url=`http://192.168.189.212:8080/${endpoint}`
         console.log("🚀 ~ apiCaller ~ url:", url)
         const options = {
             method,

@@ -5,6 +5,7 @@ import apiCaller from '../services/apiCaller'
 import { Table } from 'react-native-table-component'
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { TouchableOpacity } from 'react-native';
+import Filter from '../components/Filter';
 
 export default function ProductsListing({navigation}) {
   const [products, setProducts] = useState([])
@@ -14,15 +15,22 @@ export default function ProductsListing({navigation}) {
 
     const fetchData = async()=>{
         try {
-            const products  =  await apiCaller('product/getall', 'POST')
+          const data ={}
+            const products  =  await apiCaller(`product/getall?query=${search}`, 'POST', data)
             setProducts(products)
         } catch (error) {
             Alert.alert("Error in fetching data", error)
         }
     }
     fetchData();
-  }, [])
+  }, [search])
 
+  
+  const searchValue = (valueSearched)=>{
+    setSearch(valueSearched)
+    console.log('Value searched', search);
+    
+  }
   const renderHeader = () => (
     <View style={styles.header}>
       <Text style={styles.headerText}>ID</Text>
@@ -46,7 +54,9 @@ export default function ProductsListing({navigation}) {
 
     return (
         <SafeAreaView style={styles.container}>
-            
+            <View style={styles.filterContainer}>
+              <Filter pushInput={searchValue}/>
+            </View>
             <Text style={styles.heading}>Products</Text>
       {renderHeader()}
       <FlatList
@@ -92,5 +102,12 @@ const styles = StyleSheet.create({
         fontSize:28,
         fontWeight:'bold',
         color:'white'
+    },
+    filterContainer:{
+      height:'auto',
+      borderWidth:1,
+      borderColor:'red',
+      height:80,
+      borderRadius:10
     }
 })
