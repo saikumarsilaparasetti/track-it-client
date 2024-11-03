@@ -22,15 +22,31 @@ export default function ProductForm({route, onSubit, navigation}) {
         setLoading(true)
         
         console.log("🚀 ~ handleSubmit ~ product:", product)
-        const productCreated = await apiCaller('product/create', 'POST', {...product})
-        console.log("🚀 ~ handleSubmit ~ productCreated:", productCreated)
-        if(productCreated){
-            setLoading(false)
-            Alert.alert("Success!!", "Product created Successfully!!")
-            navigation.navigate('productsListing')
-        }else{
-            setLoading(false)
-            Alert.alert("Error!!", "Couldnt create Product, Please try again!!")    
+       // case handling adding of product
+        if(addingProduct){
+            const productCreated = await apiCaller('product/create', 'POST', {...product})
+            console.log("🚀 ~ handleSubmit ~ productCreated:", productCreated)
+            if(productCreated){
+                setLoading(false)
+                Alert.alert("Success!!", "Product created Successfully!!")
+                navigation.navigate('productsListing')
+            }else{
+                setLoading(false)
+                Alert.alert("Error!!", "Couldnt create Product, Please try again!!")    
+            }
+        }else{// case handling editing of product
+            console.log(product.id);
+            console.log(product);
+            const productUpdated = await apiCaller(`product/update/${product.id}`, 'POST', {...product})
+            console.log("🚀 ~ handleSubmit ~ productUpdated:", productUpdated)
+            if(productUpdated){
+                setLoading(false)
+                Alert.alert("Success!!", "Product Updated Successfully!!")
+                navigation.navigate('productsListing')
+            }else{
+                setLoading(false)
+                Alert.alert("Error!!", "Couldnt update prodcut Product, Please try again!!")    
+            }
         }
 
     }
@@ -67,7 +83,9 @@ export default function ProductForm({route, onSubit, navigation}) {
         <Text style={styles.label}>MRP </Text>
         <TextInput 
             style={styles.input}
-            value={product.mrp}
+            // value={product.mrp}
+            placeholder={""+(productParam?.mrp?productParam?.mrp:'')}
+            placeholderTextColor={'white'}
             // editable={false}
             onChangeText={text=>handleChange('mrp', text)}
             keyboardType='numeric'
@@ -78,6 +96,8 @@ export default function ProductForm({route, onSubit, navigation}) {
             style={styles.input}
             value={product.discount}
             // editable={false}
+            placeholder={""+(productParam?.discount?productParam?.discount:'')}
+            placeholderTextColor={'white'}
             onChangeText={text=>handleChange('discount', text)}
             keyboardType='numeric'
             
