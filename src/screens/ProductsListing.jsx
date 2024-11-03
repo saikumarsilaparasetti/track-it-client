@@ -12,11 +12,14 @@ import { faMugSaucer } from '@fortawesome/free-solid-svg-icons/faMugSaucer'
 
 import { fas } from '@fortawesome/free-solid-svg-icons'; // Import the solid icon set
 import { useFocusEffect } from '@react-navigation/native';
+import Spinner from '../components/Spinner';
 // import Icon from 'react-native-vector-icons/FontAwesome';
 
 export default function ProductsListing({navigation}) {
   const [products, setProducts] = useState([])
   const [search, setSearch] = useState('')
+  const [loading, setLoading] = useState(false)
+
   library.add(fas); // Add the solid icon set to the library
 
   useFocusEffect(
@@ -25,8 +28,10 @@ export default function ProductsListing({navigation}) {
       const fetchData = async()=>{
           try {
             const data ={}
+            setLoading(true)
               const products  =  await apiCaller(`product/getall?query=${search}`, 'POST', data)
               setProducts(products)
+              setLoading(false)
           } catch (error) {
               Alert.alert("Error in fetching data", error)
           }
@@ -67,6 +72,8 @@ export default function ProductsListing({navigation}) {
 
     return (
         <SafeAreaView style={styles.container}>
+          {/* {loading&& <Spinner/>} */}
+          
             <View style={styles.filterContainer}>
               <Filter pushInput={searchValue}/>
             </View>
@@ -80,16 +87,21 @@ export default function ProductsListing({navigation}) {
               </TouchableOpacity>
               
             </View>
-      {renderHeader()}
+            {renderHeader()}
+          {loading?(<Spinner/>):( 
+            <View>
+      
       <FlatList
         data={products}
         renderItem={renderRow}
         keyExtractor={(item) => item.id}
       />
+            </View>
+
+            )}
         </SafeAreaView>
   )
 }
-
 
 const styles = StyleSheet.create({
     container: { 
